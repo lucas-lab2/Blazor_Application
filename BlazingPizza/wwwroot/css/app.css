@@ -1,0 +1,109 @@
+* { box-sizing: border-box; }
+
+html, body {
+    margin: 0;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background: #f6f1ea;
+    color: #2b2b2b;
+}
+
+body { min-height: 100vh; display: flex; flex-direction: column; }
+#app, body > * { flex-shrink: 0; }
+
+h1 { font-size: 1.6rem; margin: 0 0 1rem; }
+h2 { font-size: 1.2rem; margin: 0 0 .75rem; }
+
+/* ---------- Header ---------- */
+.site-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: .6rem 1.5rem; background: #b3261e; color: #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,.25);
+}
+.brand { display: flex; align-items: center; gap: .6rem; color: #fff; text-decoration: none; font-size: 1.5rem; font-weight: 700; }
+.logo { width: 40px; height: 40px; }
+.nav-menu { display: flex; gap: 1.25rem; }
+.nav-menu a { color: #ffd9d6; text-decoration: none; font-weight: 600; padding: .25rem .1rem; border-bottom: 2px solid transparent; }
+.nav-menu a:hover { color: #fff; }
+.nav-menu a.active { color: #fff; border-bottom-color: #ffc107; }
+
+/* ---------- Content ---------- */
+.site-content { flex: 1 0 auto; padding: 1.25rem 1.5rem; }
+.home { display: flex; gap: 1.5rem; align-items: flex-start; }
+.menu { flex: 1; min-width: 0; }
+
+.pizza-cards { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 1rem; }
+.pizza-cards li {
+    height: 170px; border-radius: 10px; cursor: pointer; overflow: hidden;
+    background-size: cover; background-position: center; background-color: #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,.2); position: relative; transition: transform .1s;
+}
+.pizza-cards li:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,.3); }
+.pizza-info {
+    position: absolute; inset: auto 0 0 0; padding: .6rem .75rem;
+    background: linear-gradient(transparent, rgba(0,0,0,.85) 40%); color: #fff;
+    display: flex; flex-direction: column; gap: .15rem;
+}
+.pizza-info .title { font-weight: 700; font-size: 1.05rem; }
+.pizza-info .description { font-size: .78rem; opacity: .9; }
+.pizza-info .price { font-weight: 700; color: #ffc107; }
+
+/* ---------- Sidebar / cart ---------- */
+.sidebar { width: 320px; flex-shrink: 0; background: #fff; border-radius: 10px; padding: 1rem; box-shadow: 0 2px 6px rgba(0,0,0,.15); }
+.empty-cart { text-align: center; color: #888; padding: 1.5rem 0; }
+.cart-item { display: flex; align-items: center; gap: .6rem; padding: .5rem 0; border-bottom: 1px solid #eee; }
+.cart-item-info { flex: 1; min-width: 0; }
+.cart-item .title { font-weight: 600; }
+.cart-item .details { font-size: .8rem; color: #777; }
+.item-price { font-weight: 600; white-space: nowrap; }
+.delete-item { border: 0; background: none; font-size: 1.4rem; color: #b3261e; cursor: pointer; line-height: 1; }
+.order-total { display: flex; align-items: center; justify-content: space-between; gap: .5rem; margin-top: 1rem; font-weight: 700; }
+.order-total.hidden { display: none; }
+.total-price { color: #b3261e; margin-left: auto; }
+
+/* ---------- Buttons ---------- */
+.btn { display: inline-block; border: 0; border-radius: 6px; padding: .5rem 1rem; font-weight: 700; cursor: pointer; text-decoration: none; font-size: .95rem; }
+.btn-warning { background: #ffc107; color: #222; }
+.btn-success { background: #2e7d32; color: #fff; }
+.btn-secondary { background: #ddd; color: #222; }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+
+/* ---------- Dialog ---------- */
+.dialog-container { position: fixed; inset: 0; background: rgba(0,0,0,.55); display: flex; align-items: center; justify-content: center; z-index: 10; }
+.dialog { background: #fff; border-radius: 12px; width: min(480px, 92vw); max-height: 90vh; overflow: auto; box-shadow: 0 10px 30px rgba(0,0,0,.4); }
+.dialog-title { background: #b3261e; color: #fff; padding: 1rem 1.25rem; border-radius: 12px 12px 0 0; }
+.dialog-title h2 { margin: 0 0 .25rem; }
+.dialog-title p { margin: 0; font-size: .9rem; opacity: .9; }
+.dialog-body { padding: 1rem 1.25rem; }
+.dialog-field { margin-bottom: 1rem; }
+.dialog-field > label { display: block; font-weight: 700; margin-bottom: .4rem; }
+.dialog-field input[type=range] { width: 100%; }
+.size-label { display: block; margin-top: .25rem; color: #555; }
+.toppings { display: grid; grid-template-columns: 1fr 1fr; gap: .35rem .75rem; }
+.topping { font-size: .9rem; display: flex; gap: .35rem; align-items: center; }
+.dialog-buttons { display: flex; align-items: center; justify-content: space-between; padding: .9rem 1.25rem; background: #f3f3f3; border-radius: 0 0 12px 12px; }
+.dialog-price { font-weight: 700; font-size: 1.1rem; color: #b3261e; }
+
+/* ---------- Checkout / messages ---------- */
+.checkout-page, .page-message { max-width: 640px; margin: 0 auto; background: #fff; padding: 1.25rem 1.5rem; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,.15); }
+.checkout-total { text-align: right; font-weight: 700; margin-top: .75rem; font-size: 1.1rem; }
+.checkout-form { display: flex; flex-direction: column; gap: .8rem; margin-top: 1.25rem; }
+.checkout-form label { display: flex; flex-direction: column; gap: .25rem; font-weight: 600; }
+.checkout-form input { padding: .5rem; border: 1px solid #bbb; border-radius: 6px; font-size: 1rem; }
+.alert { padding: .9rem 1rem; border-radius: 8px; margin-bottom: 1rem; }
+.alert-success { background: #e3f4e4; color: #1b5e20; }
+
+/* ---------- Footer ---------- */
+.site-footer {
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: .5rem;
+    padding: .9rem 1.5rem; background: #2b2b2b; color: #ddd; font-size: .9rem;
+}
+.footer-author { font-weight: 600; color: #fff; }
+
+/* ---------- Blazor error UI ---------- */
+#blazor-error-ui { display: none; position: fixed; bottom: 0; left: 0; right: 0; padding: .6rem 1.25rem; background: #ffffe0; color: #000; z-index: 1000; box-shadow: 0 -1px 2px rgba(0,0,0,.2); }
+#blazor-error-ui .dismiss { cursor: pointer; position: absolute; right: .75rem; top: .5rem; }
+
+@media (max-width: 800px) {
+    .home { flex-direction: column; }
+    .sidebar { width: 100%; }
+}

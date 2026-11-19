@@ -1,0 +1,60 @@
+<div class="dialog-container">
+    <div class="dialog">
+        <div class="dialog-title">
+            <h2>@Pizza.Special?.Name</h2>
+            <p>@Pizza.Special?.Description</p>
+        </div>
+
+        <div class="dialog-body">
+            <div class="dialog-field">
+                <label>Size:</label>
+                <input type="range" min="@Pizza.MinimumSize" max="@Pizza.MaximumSize" step="1"
+                       @bind="Pizza.Size" @bind:event="oninput" />
+                <span class="size-label">@(Pizza.Size)&quot; &mdash; @PriceFormatter.Format(Pizza.GetBasePrice())</span>
+            </div>
+
+            <div class="dialog-field">
+                <label>Extra toppings:</label>
+                <div class="toppings">
+                    @foreach (var topping in Toppings)
+                    {
+                        <label class="topping">
+                            <input type="checkbox"
+                                   checked="@Pizza.Toppings.Any(t => t.Id == topping.Id)"
+                                   @onchange="@(e => ToggleTopping(topping, (bool)(e.Value ?? false)))" />
+                            @topping.Name (@topping.GetFormattedPrice())
+                        </label>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="dialog-buttons">
+            <button type="button" class="btn btn-secondary" @onclick="OnCancel">Cancel</button>
+            <span class="dialog-price">@Pizza.GetFormattedTotalPrice()</span>
+            <button type="button" class="btn btn-success" @onclick="OnConfirm">Add to order</button>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter, EditorRequired] public Pizza Pizza { get; set; } = default!;
+    [Parameter, EditorRequired] public IReadOnlyList<Topping> Toppings { get; set; } = default!;
+    [Parameter] public EventCallback OnCancel { get; set; }
+    [Parameter] public EventCallback OnConfirm { get; set; }
+
+    private void ToggleTopping(Topping topping, bool isChecked)
+    {
+        if (isChecked)
+        {
+            if (!Pizza.Toppings.Any(t => t.Id == topping.Id))
+            {
+                Pizza.Toppings.Add(topping);
+            }
+        }
+        else
+        {
+            Pizza.Toppings.RemoveAll(t => t.Id == topping.Id);
+        }
+    }
+}

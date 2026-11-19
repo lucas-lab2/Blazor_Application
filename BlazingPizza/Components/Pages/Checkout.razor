@@ -1,0 +1,78 @@
+@page "/checkout"
+@inject OrderState OrderState
+
+<PageTitle>Checkout - Blazing Pizza</PageTitle>
+
+<div class="checkout-page">
+    <h1>Checkout</h1>
+
+    @if (orderPlaced)
+    {
+        <div class="alert alert-success">
+            Thank you, @customerName! Your order of @placedCount pizza(s) totaling
+            <strong>@placedTotal</strong> is on its way.
+        </div>
+        <a class="btn btn-warning" href="/">Back to the menu</a>
+    }
+    else if (OrderState.Pizzas.Count == 0)
+    {
+        <p>Your order is empty.</p>
+        <a class="btn btn-warning" href="/">Choose a pizza</a>
+    }
+    else
+    {
+        <div class="checkout-items">
+            @foreach (var pizza in OrderState.Pizzas)
+            {
+                <div class="cart-item">
+                    <div class="cart-item-info">
+                        <div class="title">@pizza.Special?.Name</div>
+                        <div class="details">
+                            @(pizza.Size)&quot;
+                            @if (pizza.Toppings.Count > 0)
+                            {
+                                <span>&mdash; @string.Join(", ", pizza.Toppings.Select(t => t.Name))</span>
+                            }
+                        </div>
+                    </div>
+                    <div class="item-price">@pizza.GetFormattedTotalPrice()</div>
+                </div>
+            }
+            <div class="checkout-total">
+                Total: <span class="total-price">@OrderState.GetFormattedTotalPrice()</span>
+            </div>
+        </div>
+
+        <div class="checkout-form">
+            <label>
+                Name
+                <input type="text" @bind="customerName" @bind:event="oninput" />
+            </label>
+            <label>
+                Delivery address
+                <input type="text" @bind="address" @bind:event="oninput" />
+            </label>
+            <button type="button" class="btn btn-success"
+                    disabled="@(string.IsNullOrWhiteSpace(customerName) || string.IsNullOrWhiteSpace(address))"
+                    @onclick="PlaceOrder">
+                Place order
+            </button>
+        </div>
+    }
+</div>
+
+@code {
+    private string customerName = "";
+    private string address = "";
+    private bool orderPlaced;
+    private int placedCount;
+    private string placedTotal = "";
+
+    private void PlaceOrder()
+    {
+        placedCount = OrderState.Pizzas.Count;
+        placedTotal = OrderState.GetFormattedTotalPrice();
+        OrderState.Clear();
+        orderPlaced = true;
+    }
+}

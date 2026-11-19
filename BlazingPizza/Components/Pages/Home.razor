@@ -1,0 +1,84 @@
+@page "/"
+@inject PizzaService PizzaService
+@inject OrderState OrderState
+
+<PageTitle>Blazing Pizza</PageTitle>
+
+<div class="home">
+    <section class="menu">
+        <h1>Choose your pizza</h1>
+        <ul class="pizza-cards">
+            @foreach (var special in PizzaService.Specials)
+            {
+                <li @onclick="@(() => StartConfiguring(special))"
+                    style="background-image: url('@special.ImageUrl')">
+                    <div class="pizza-info">
+                        <span class="title">@special.Name</span>
+                        <span class="description">@special.Description</span>
+                        <span class="price">@special.GetFormattedBasePrice()</span>
+                    </div>
+                </li>
+            }
+        </ul>
+    </section>
+
+    <aside class="sidebar">
+        <h2>Your order</h2>
+
+        @if (OrderState.Pizzas.Count == 0)
+        {
+            <div class="empty-cart">Choose a pizza<br />to get started</div>
+        }
+        else
+        {
+            <div class="order-contents">
+                @foreach (var pizza in OrderState.Pizzas)
+                {
+                    <div class="cart-item">
+                        <div class="cart-item-info">
+                            <div class="title">@pizza.Special?.Name</div>
+                            <div class="details">@(pizza.Size)&quot;@(pizza.Toppings.Count > 0 ? $", +{pizza.Toppings.Count} topping(s)" : "")</div>
+                        </div>
+                        <div class="item-price">@pizza.GetFormattedTotalPrice()</div>
+                        <button type="button" class="delete-item" title="Remove"
+                                @onclick="@(() => OrderState.RemovePizza(pizza))">&times;</button>
+                    </div>
+                }
+            </div>
+        }
+
+        <div class="order-total @(OrderState.Pizzas.Count == 0 ? "hidden" : "")">
+            Total:
+            <span class="total-price">@OrderState.GetFormattedTotalPrice()</span>
+            <a class="btn btn-warning" href="/checkout">Order &gt;</a>
+        </div>
+    </aside>
+</div>
+
+@if (configuringPizza is not null)
+{
+    <ConfigurePizzaDialog Pizza="configuringPizza"
+                          Toppings="PizzaService.Toppings"
+                          OnCancel="CancelConfiguring"
+                          OnConfirm="ConfirmConfiguring" />
+}
+
+@code {
+    private Pizza? configuringPizza;
+
+    private void StartConfiguring(PizzaSpecial special)
+    {
+        configuringPizza = new Pizza { Special = special, Size = Pizza.DefaultSize };
+    }
+
+    private void CancelConfiguring() => configuringPizza = null;
+
+    private void ConfirmConfiguring()
+    {
+        if (configuringPizza is not null)
+        {
+            OrderState.AddPizza(configuringPizza);
+            configuringPizza = null;
+        }
+    }
+}
